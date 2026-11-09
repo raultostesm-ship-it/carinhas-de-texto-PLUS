@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Carinhas Neon PLUS</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: white;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #242438;
+    min-height: 100vh;
+}
+
+#fundo {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.mancha {
+    position: absolute;
+    border-radius: 47% 53% 61% 39% / 55% 43% 57% 45%;
+    opacity: 0.85;
+    transition: left 0.5s ease, top 0.5s ease;
+    animation: flutuar 4s ease-in-out infinite alternate;
+}
+
+@keyframes flutuar {
+    from {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    to {
+        transform: translateY(-15px) rotate(12deg);
+    }
+}
+
+main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: auto;
+    padding: 30px 18px 80px;
+}
+
+header {
+    background: rgba(255,255,255,0.94);
+    text-align: center;
+    padding: 25px;
+    border-radius: 25px;
+    margin-bottom: 22px;
+}
+
+h1 {
+    font-size: clamp(30px, 5vw, 54px);
+    margin: 0;
+    font-weight: 900;
+}
+
+h1 span {
+    color: #0088ff;
+}
+
+header p {
+    color: #626477;
+}
+
+.barra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    border: 1px solid #e5e5ee;
+}
+
+input {
+    flex: 1;
+    min-width: 180px;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid #bbbbcc;
+    font-size: 16px;
+}
+
+button {
+    cursor: pointer;
+    border: 1px solid #dddded;
+    background: white;
+    color: #252538;
+    padding: 11px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+button:hover {
+    border-color: #0088ff;
+    transform: translateY(-2px);
+}
+
+button:focus-visible {
+    outline: 3px solid #0088ff;
+}
+
+#seguir.ativo {
+    background: #d9efff;
+    border-color: #0088ff;
+}
+
+.categorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0;
+}
+
+.categoria.ativa {
+    background: #292940;
+    color: white;
+}
+
+#contador {
+    display: inline-block;
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 14px;
+}
+
+.cartao {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid #e1e1ea;
+    border-radius: 19px;
+    padding: 18px 10px;
+    min-height: 155px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    gap: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    transition: 0.2s;
+}
+
+.cartao:hover {
+    transform: translateY(-4px);
+    border-color: #0088ff;
+    box-shadow: 0 8px 25px rgba(0,136,255,0.12);
+}
+
+.carinha {
+    font-size: 23px;
+    text-align: center;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.nome {
+    font-size: 13px;
+    color: #686879;
+    text-align: center;
+}
+
+.botoes {
+    display: flex;
+    gap: 6px;
+}
+
+.copiar {
+    background: #e8f4ff;
+    border-color: #c5e0ff;
+}
+
+.favorito {
+    font-size: 20px;
+    padding: 6px 12px;
+}
+
+#aviso {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #292940;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 13px;
+    display: none;
+    z-index: 100;
+}
+
+footer {
+    text-align: center;
+    margin-top: 35px;
+    padding: 15px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mancha {
+        animation: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="fundo"></div>
+
+<main>
+
+<header>
+    <h1>✦ Carinhas Neon <span>PLUS</span> ✦</h1>
+    <p>Sua coleção de 200 carinhas para copiar e usar!</p>
+</header>
+
+<div class="barra">
+
+    <input
+        id="pesquisa"
+        type="search"
+        placeholder="🔎 Pesquisar carinhas..."
+    >
+
+    <button id="seguir">
+        🐭 Seguir mouse: OFF
+    </button>
+
+    <button id="botaoFavoritos">
+        ⭐ Favoritos: OFF
+    </button>
+
+</div>
+
+<div id="categorias" class="categorias"></div>
+
+<div id="contador"></div>
+
+<div id="grade" class="grade"></div>
+
+<footer>
+    🎨 Carinhas Neon PLUS — Sua coleção de carinhas!
+    <br>
+    Funciona sem internet.
+</footer>
+
+</main>
+
+<div id="aviso" role="status"></div>
+
+<script>
+
+// ========================================
+// CARINHAS NEON PLUS
+// ========================================
+
+// As 74 carinhas da coleção original.
+// Formato: categoria | nome | carinha
+
+const originais = `
+Palavras|Sim|(＾▽＾)ノ SIM!
+Palavras|Sim|(≧▽≦) SIMMM!
+Palavras|Não|(¬_¬) NÃO.
+Palavras|Não|(╬ಠ益ಠ) NÃO!
+Palavras|Oi|ヾ(＾∇＾) OI!
+Palavras|Tchau|(｡･ω･)ﾉﾞ TCHAU!
+Palavras|Socorro|Σ(°Д°;) SOCORRO!
+Palavras|Obrigado|(人´∀\`) OBRIGADO!
+Palavras|Por favor|(｡•́‿•̀｡) POR FAVOR
+Palavras|Desculpa|(｡•́︿•̀｡) DESCULPA
+Palavras|Uau|(☆▽☆) UAU!
+Palavras|O quê?|(・_・ヾ O QUÊ?
+Palavras|Tá bom|(￣▽￣)ゞ TÁ BOM!
+Palavras|Calma|(￣ー￣) CALMA
+Palavras|Corre|ε=ε=┌(;￣▽￣)┘ CORRE!
+Palavras|Paçoca|(≧◡≦) PAÇOCA!
+Palavras|Amei|(♡°▽°♡) AMEI!
+Palavras|Nunca|(ಠ_ಠ) NUNCA!
+Palavras|Talvez|(・_・) TALVEZ
+Palavras|Bora|٩(ˊᗜˋ*)و BORA!
+Felizes|Sorriso|(＾▽＾)
+Felizes|Radiante|(≧▽≦)
+Felizes|Feliz|(⌒‿⌒)
+Felizes|Animado|٩(◕‿◕｡)۶
+Felizes|Alegria|ヽ(・∀・)ﾉ
+Felizes|Risada|(≧◡≦)
+Felizes|Fofo|(｡◕‿◕｡)
+Felizes|Festa|ヽ(⌒▽⌒)ﾉ
+Felizes|Sorridente|(✿◠‿◠)
+Felizes|Contente|(￣▽￣)
+Tristes|Chorando|(╥﹏╥)
+Tristes|Triste|(｡•́︿•̀｡)
+Tristes|Lágrimas|(ಥ_ಥ)
+Tristes|Desanimado|(；ω；)
+Tristes|Choro|(T_T)
+Tristes|Decepcionado|(._.)
+Tristes|Solitário|(っ- ‸ - ς)
+Tristes|Tristinho|(╯︵╰,)
+Bravas|Bravo|(ง'̀-'́)ง
+Bravas|Furioso|(╬ಠ益ಠ)
+Bravas|Irritado|(¬_¬)
+Bravas|Raiva|(ಠ益ಠ)
+Bravas|Revoltado|(ノಠ益ಠ)ノ
+Bravas|Desconfiado|(눈_눈)
+Bravas|Encarando|(ಠ_ಠ)
+Bravas|Explodindo|(╬ Ò﹏Ó)
+Assustadas|Surpreso|(⊙_⊙)
+Assustadas|Pânico|Σ(°△°|||)
+Assustadas|Susto|(ﾟДﾟ;)
+Assustadas|Medo|(⊙﹏⊙)
+Assustadas|Chocado|(°ロ°)
+Assustadas|Grito|ヽ(ﾟДﾟ)ﾉ
+Assustadas|Confuso|(・_・?)
+Assustadas|Espanto|(☉_☉)
+Fofinhas|Abraço|(づ｡◕‿‿◕｡)づ
+Fofinhas|Carinho|(｡♥‿♥｡)
+Fofinhas|Coração|(♡˙︶˙♡)
+Fofinhas|Tímido|(⁄ ⁄•⁄ω⁄•⁄ ⁄)
+Fofinhas|Beijinho|(づ￣ ³￣)づ
+Fofinhas|Gatinho|(=^･ω･^=)
+Fofinhas|Dormindo|(－_－) zzZ
+Fofinhas|Piscadinha|(＾_−)☆
+Fofinhas|Amor|(ღ˘⌣˘ღ)
+Fofinhas|Aconchego|(つ≧▽≦)つ
+Ações|Correndo|ε=ε=┌( >_<)┘
+Ações|Dançando|♪ヽ(^^ヽ)♪
+Ações|Acenando|ヾ(•ω•\`)o
+Ações|Pensando|(￣～￣;)
+Ações|Dormindo|(-_-) zzz
+Ações|Comendo|(っ˘ڡ˘ς)
+Ações|Aplaudindo|(๑✧◡✧๑)
+Ações|Lutando|(ง •̀_•́)ง
+Ações|Escondido||･ω･)
+Ações|Encolhido|(っ´ω\`)ﾉ
+`;
+
+// Transformar as carinhas originais em objetos
+
+const carinhas = originais
+    .trim()
+    .split("\n")
+    .map(linha => {
+        const partes = linha.split("|");
+
+        return {
+            categoria: partes[0],
+            nome: partes[1],
+            texto: partes.slice(2).join("|")
+        };
+    });
+
+// ========================================
+// 126 CARINHAS NOVAS
+// ========================================
+
+const novas = {
+
+Felizes: [
+"(＾▽＾)",
+"(≧▽≦)",
+"ヽ(・∀・)ﾉ",
+"(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧",
+"(๑˃ᴗ˂)ﻭ",
+"(｡◕‿◕｡)",
+"(✿◠‿◠)",
+"(＾ω＾)",
+"(≧◡≦)",
+"٩(◕‿◕｡)۶",
+"(⌒▽⌒)",
+"(๑>◡<๑)",
+"(o´▽\`o)",
+"(✧ω✧)",
+"(ﾉ´ヮ\`)ﾉ",
+"(￣▽￣)",
+"(｡♥‿♥｡)",
+"(๑˘︶˘๑)"
+],
+
+Tristes: [
+"(╥﹏╥)",
+"(ಥ_ಥ)",
+"(｡•́︿•̀｡)",
+"(つ﹏⊂)",
+"(ノ_<。)",
+"(；ω；)",
+"(っ- ‸ - ς)",
+"(｡╯︵╰｡)",
+"(T_T)",
+"(╯︵╰,)",
+"(ಥ﹏ಥ)",
+"(っ˘̩╭╮˘̩)っ",
+"(｡•́︵•̀｡)",
+"(ノД\`)",
+"(｡T ω T｡)",
+"(つд⊂)",
+"(ಥ⌣ಥ)",
+"(｡•́⌓•̀｡)"
+],
+
+Bravas: [
+"(╬ಠ益ಠ)",
+"(ಠ_ಠ)",
+"(ง'̀-'́)ง",
+"(╬ Ò﹏Ó)",
+"(ノಠ益ಠ)ノ",
+"(¬_¬)",
+"(눈_눈)",
+"(╬￣皿￣)",
+"(งಠ_ಠ)ง",
+"(＃\`Д´)",
+"(≖_≖ )",
+"(╬▔皿▔)",
+"(ಠ益ಠ)",
+"(ง •̀_•́)ง",
+"(╬ಠิ益ಠิ)",
+"(¬▂¬)",
+"(╬ﾟдﾟ)",
+"(ง •̀ω•́)ง"
+],
+
+Assustadas: [
+"Σ(°Д°;)",
+"(⊙_⊙)",
+"(ﾟДﾟ;)",
+"(°ロ°) !",
+"(☉_☉)",
+"(꒪⌓꒪)",
+"(⊙﹏⊙)",
+"(ﾟοﾟ人))",
+"(°◇°;)",
+"Σ(ﾟДﾟ)",
+"(｡ŏ﹏ŏ)",
+"(⊙_◎)",
+"(ﾟдﾟ)",
+"(ʘᗩʘ')",
+"(°△°|||)",
+"(☉｡☉)!",
+"(๑°⌓°๑)",
+"(⊙﹏⊙✿)"
+],
+
+Fofinhas: [
+"(づ｡◕‿‿◕｡)づ",
+"(=^･ω･^=)",
+"(｡♥‿♥｡)",
+"(◕ᴗ◕✿)",
+"ʕ•ᴥ•ʔ",
+"(๑•ᴗ•๑)",
+"(｡･ω･｡)",
+"(ฅ^•ﻌ•^ฅ)",
+"( ˘ ³˘)♥",
+"(っ˘з(˘⌣˘ )",
+"(=^ ◡ ^=)",
+"(✿◕‿◕)",
+"(๑˘︶˘๑)",
+"(っ◕‿◕)っ",
+"(=^-ω-^=)",
+"(｡•̀ᴗ-)✧",
+"(♡˙︶˙♡)",
+"(つ≧▽≦)つ"
+],
+
+Ações: [
+"ヾ(＾∇＾)",
+"(づ￣ ³￣)づ",
+"ᕕ( ᐛ )ᕗ",
+"(ﾉ◕ヮ◕)ﾉ",
+"┬─┬ノ( º _ ºノ)",
+"(╯°□°)╯︵ ┻━┻",
+"(ง •̀_•́)ง",
+"ヽ(⌐■_■)ノ♪",
+"(つ✧ω✧)つ",
+"(￣▽￣)ノ",
+"┌(・。・)┘♪",
+"(づ｡◕‿◕｡)づ",
+"(ﾉ´ヮ\`)ﾉ*:･ﾟ✧",
+"ε=ε=┌( >_<)┘",
+"(｡･ω･)ﾉﾞ",
+"(っ´▽\`)っ",
+"(๑•̀ㅂ•́)و✧",
+"(☞ﾟヮﾟ)☞"
+],
+
+Palavras: [
+"(＾▽＾) BOM DIA!",
+"(｡･ω･)ﾉﾞ BOA NOITE!",
+"(≧◡≦) OBA!",
+"(╥﹏╥) AI!",
+"(๑˃ᴗ˂)ﻭ CONSEGUI!",
+"(¬_¬) SÉRIO?",
+"(✿◠‿◠) BEM-VINDO!",
+"(ง •̀_•́)ง VAMOS!",
+"(つ≧▽≦)つ ABRAÇO!",
+"(☆▽☆) INCRÍVEL!",
+"(｡•́︿•̀｡) SAUDADE!",
+"(＾ω＾) LEGAL!",
+"(⊙_⊙) COMO?",
+"(￣▽￣) TUDO BEM!",
+"(◕‿◕) AMIGOS!",
+"(ಠ_ಠ) PARE!",
+"(ﾉ◕ヮ◕)ﾉ PARABÉNS!",
+"(๑•̀ㅂ•́)و✧ BORA!"
+]
+
+};
+
+// Adicionar as 126 novas carinhas
+
+for (const categoria in novas) {
+
+    novas[categoria].forEach((texto, indice) => {
+
+        carinhas.push({
+            categoria: categoria,
+            nome: "Carinha extra " + (indice + 1),
+            texto: texto
+        });
+
+    });
+
+}
+
+// ========================================
+// SISTEMA DE PESQUISA E CATEGORIAS
+// ========================================
+
+const grade = document.getElementById("grade");
+const pesquisa = document.getElementById("pesquisa");
+const categorias = document.getElementById("categorias");
+const contador = document.getElementById("contador");
+
+let categoriaAtual = "Todas";
+let somenteFavoritos = false;
+
+let favoritos = [];
+
+try {
+    favoritos = JSON.parse(
+        localStorage.getItem("carinhasPlusFavoritos") || "[]"
+    );
+} catch (erro) {
+    favoritos = [];
+}
+
+function salvarFavoritos() {
+    try {
+        localStorage.setItem(
+            "carinhasPlusFavoritos",
+            JSON.stringify(favoritos)
+        );
+    } catch (erro) {
+        console.log("Não foi possível salvar favoritos.");
+    }
+}
+
+function mostrarAviso(mensagem) {
+
+    const aviso = document.getElementById("aviso");
+
+    aviso.textContent = mensagem;
+    aviso.style.display = "block";
+
+    clearTimeout(mostrarAviso.tempo);
+
+    mostrarAviso.tempo = setTimeout(() => {
+        aviso.style.display = "none";
+    }, 1800);
+
+}
+
+// ========================================
+// COPIAR CARINHAS
+// ========================================
+
+async function copiarCarinha(texto) {
+
+    try {
+
+        await navigator.clipboard.writeText(texto);
+
+        mostrarAviso("📋 Carinha copiada!");
+
+    } catch (erro) {
+
+        const campo = document.createElement("textarea");
+
+        campo.value = texto;
+        campo.style.position = "fixed";
+        campo.style.opacity = "0";
+
+        document.body.appendChild(campo);
+
+        campo.select();
+
+        const conseguiu = document.execCommand("copy");
+
+        campo.remove();
+
+        if (conseguiu) {
+            mostrarAviso("📋 Carinha copiada!");
+        } else {
+            mostrarAviso("Não foi possível copiar automaticamente.");
+        }
+
+    }
+
+}
+
+// ========================================
+// CRIAR BOTÕES DE CATEGORIAS
+// ========================================
+
+function criarCategorias() {
+
+    categorias.innerHTML = "";
+
+    const lista = [
+        "Todas",
+        ...new Set(carinhas.map(c => c.categoria))
+    ];
+
+    lista.forEach(nome => {
+
+        const botao = document.createElement("button");
+
+        botao.textContent = nome;
+        botao.className = "categoria";
+
+        if (categoriaAtual === nome) {
+            botao.classList.add("ativa");
+        }
+
+        botao.onclick = () => {
+            categoriaAtual = nome;
+            mostrarCarinhas();
+        };
+
+        categorias.appendChild(botao);
+
+    });
+
+}
+
+// ========================================
+// MOSTRAR AS CARINHAS
+// ========================================
+
+function mostrarCarinhas() {
+
+    criarCategorias();
+
+    grade.innerHTML = "";
+
+    const textoPesquisa = pesquisa.value
+        .toLocaleLowerCase("pt-BR")
+        .trim();
+
+    const resultado = carinhas
+        .map((carinha, indice) => ({
+            ...carinha,
+            indice: indice
+        }))
+        .filter(carinha => {
+
+            const categoriaCorreta =
+                categoriaAtual === "Todas" ||
+                carinha.categoria === categoriaAtual;
+
+            const textoCompleto = (
+                carinha.nome + " " +
+                carinha.categoria + " " +
+                carinha.texto
+            ).toLocaleLowerCase("pt-BR");
+
+            const pesquisaCorreta =
+                textoCompleto.includes(textoPesquisa);
+
+            const favoritoCorreto =
+                !somenteFavoritos ||
+                favoritos.includes(carinha.indice);
+
+            return (
+                categoriaCorreta &&
+                pesquisaCorreta &&
+                favoritoCorreto
+            );
+
+        });
+
+    contador.textContent =
+        resultado.length + " de " +
+        carinhas.length + " carinhas";
+
+    if (resultado.length === 0) {
+
+        const mensagem = document.createElement("p");
+
+        mensagem.textContent =
+            "Nenhuma carinha encontrada!";
+
+        grade.appendChild(mensagem);
+
+        return;
+    }
+
+    resultado.forEach(carinha => {
+
+        const cartao = document.createElement("div");
+        cartao.className = "cartao";
+
+        const simbolo = document.createElement("div");
+        simbolo.className = "carinha";
+        simbolo.textContent = carinha.texto;
+
+        const nome = document.createElement("div");
+        nome.className = "nome";
+        nome.textContent =
+            carinha.nome + " • " + carinha.categoria;
+
+        const botoes = document.createElement("div");
+        botoes.className = "botoes";
+
+        const copiar = document.createElement("button");
+        copiar.className = "copiar";
+        copiar.textContent = "📋 Copiar";
+
+        copiar.onclick = () => {
+            copiarCarinha(carinha.texto);
+        };
+
+        const favorito = document.createElement("button");
+        favorito.className = "favorito";
+
+        const estaFavorito =
+            favoritos.includes(carinha.indice);
+
+        favorito.textContent =
+            estaFavorito ? "★" : "☆";
+
+        favorito.onclick = () => {
+
+            if (favoritos.includes(carinha.indice)) {
+
+                favoritos = favoritos.filter(
+                    indice => indice !== carinha.indice
+                );
+
+            } else {
+
+                favoritos.push(carinha.indice);
+
+            }
+
+            salvarFavoritos();
+            mostrarCarinhas();
+
+        };
+
+        botoes.appendChild(copiar);
+        botoes.appendChild(favorito);
+
+        cartao.appendChild(simbolo);
+        cartao.appendChild(nome);
+        cartao.appendChild(botoes);
+
+        grade.appendChild(cartao);
+
+    });
+
+}
+
+pesquisa.addEventListener("input", mostrarCarinhas);
+
+document.getElementById("botaoFavoritos").onclick = function() {
+
+    somenteFavoritos = !somenteFavoritos;
+
+    this.textContent =
+        "⭐ Favoritos: " +
+        (somenteFavoritos ? "ON" : "OFF");
+
+    mostrarCarinhas();
+
+};
+
+// ========================================
+// MANCHINHAS COLORIDAS
+// ========================================
+
+const fundo = document.getElementById("fundo");
+
+const cores = [
+    "#008cff",
+    "#00d94f",
+    "#ffd500",
+    "#ff3030"
+];
+
+const manchas = [];
+
+for (let i = 0; i < 48; i++) {
+
+    const mancha = document.createElement("div");
+
+    mancha.className = "mancha";
+
+    const tamanho = i < 8
+        ? 35 + Math.random() * 45
+        : 5 + Math.random() * 17;
+
+    const x = Math.random() * 95;
+    const y = Math.random() * 95;
+
+    mancha.style.width = tamanho + "px";
+    mancha.style.height = tamanho + "px";
+
+    mancha.style.background = cores[i % 4];
+
+    mancha.style.left = x + "%";
+    mancha.style.top = y + "%";
+
+    mancha.style.animationDelay =
+        (-Math.random() * 5) + "s";
+
+    fundo.appendChild(mancha);
+
+    manchas.push({
+        elemento: mancha,
+        x: x,
+        y: y
+    });
+
+}
+
+// ========================================
+// BOTÃO SEGUIR MOUSE
+// ========================================
+
+let seguindoMouse = false;
+
+const botaoSeguir = document.getElementById("seguir");
+
+botaoSeguir.onclick = function() {
+
+    seguindoMouse = !seguindoMouse;
+
+    this.textContent =
+        "🐭 Seguir mouse: " +
+        (seguindoMouse ? "ON" : "OFF");
+
+    this.classList.toggle("ativo", seguindoMouse);
+
+    if (!seguindoMouse) {
+
+        manchas.forEach(mancha => {
+
+            mancha.elemento.style.left =
+                mancha.x + "%";
+
+            mancha.elemento.style.top =
+                mancha.y + "%";
+
+        });
+
+    }
+
+};
+
+// ========================================
+// FAZER MANCHAS SEGUIREM O CURSOR
+// ========================================
+
+let ultimoMovimento = 0;
+
+document.addEventListener("pointermove", evento => {
+
+    if (!seguindoMouse) {
+        return;
+    }
+
+    const agora = Date.now();
+
+    if (agora - ultimoMovimento < 50) {
+        return;
+    }
+
+    ultimoMovimento = agora;
+
+    manchas.forEach((mancha, indice) => {
+
+        const angulo = indice * 2.39996;
+
+        const distancia =
+            65 + (indice % 6) * 19;
+
+        const x =
+            evento.clientX +
+            Math.cos(angulo) * distancia;
+
+        const y =
+            evento.clientY +
+            Math.sin(angulo) * distancia;
+
+        const limiteX = Math.max(
+            0,
+            Math.min(window.innerWidth - 20, x)
+        );
+
+        const limiteY = Math.max(
+            0,
+            Math.min(window.innerHeight - 20, y)
+        );
+
+        mancha.elemento.style.left =
+            limiteX + "px";
+
+        mancha.elemento.style.top =
+            limiteY + "px";
+
+    });
+
+});
+
+// ========================================
+// INICIAR O APLICATIVO
+// ========================================
+
+mostrarCarinhas();
+
+console.log("Carinhas Neon PLUS iniciado!");
+console.log("Total de carinhas:", carinhas.length);
+
+</script>
+
+</body>
+</html>
